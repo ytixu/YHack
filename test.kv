@@ -1,0 +1,20 @@
+#:kivy 1.0.9
+
+<testBody>:
+    size: 50, 50
+    canvas:
+        Ellipse:
+            pos: self.pos
+            size: self.size
+
+<testGame>:
+    body: test_body
+
+    canvas:
+        Rectangle:
+            pos: self.center_x - 5, 0
+            size: 10, self.height
+
+    testBody:
+        id: test_body
+        center: self.parent.center
