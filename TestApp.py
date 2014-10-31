@@ -5,7 +5,7 @@ from kivy.vector import Vector
 from kivy.clock import Clock
 from random import randint
 
-class testBody(Widget):
+class TestBody(Widget):
 
     velocity_x = NumericProperty(0)
     velocity_y = NumericProperty(0)
@@ -14,7 +14,7 @@ class testBody(Widget):
     def move(self):
         self.pos = Vector(*self.velocity) + self.pos
 
-class testGame(Widget):
+class TestGame(Widget):
     body = ObjectProperty(None)
     # user = ObjectProperty(None)
 
@@ -42,13 +42,13 @@ class testGame(Widget):
     #     if touch.x > self.width - self.width / 3:
     #         self.player2.center_y = touch.y
 
-class testApp(App):
+class TestApp(App):
     def build(self):
-    	game = testGame()
+    	game = TestGame()
     	game.start()
     	Clock.schedule_interval(game.update, 1.0/60.0)
         return game
 
 
 if __name__ == '__main__':
-    testApp().run()
+    TestApp().run()

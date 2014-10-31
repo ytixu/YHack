@@ -1,13 +1,13 @@
 #:kivy 1.0.9
 
-<testBody>:
+<TestBody>:
     size: 50, 50
     canvas:
         Ellipse:
             pos: self.pos
             size: self.size
 
-<testGame>:
+<TestGame>:
     body: test_body
 
     canvas:
@@ -15,6 +15,6 @@
             pos: self.center_x - 5, 0
             size: 10, self.height
 
-    testBody:
+    TestBody:
         id: test_body
         center: self.parent.center
