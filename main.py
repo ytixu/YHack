@@ -87,10 +87,12 @@ class TextEditor(FloatLayout):
         self.dismiss_popup()
         self.show_save()
         self.input_box.text = ''
+        self.bottom_bar.changeID("doc_id.txt")
 
     def new_no_save(self, trashVariable):
         self.dismiss_popup()
         self.input_box.text = ''
+        self.bottom_bar.changeID("doc_id.txt")
 
     def show_new(self):
         if (self.input_box.text) != '': #inputbox not empty
