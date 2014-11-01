@@ -9,8 +9,8 @@ from kivy.uix.popup import Popup
 
 import os
 
-class MenuDialog(BoxLayout):
-    pass
+# class Menu(BoxLayout):
+#     pass
 
 class LoadDialog(FloatLayout):
     load = ObjectProperty(None)
@@ -26,10 +26,8 @@ class SaveDialog(FloatLayout):
 class Root(FloatLayout):
     loadfile = ObjectProperty(None)
     savefile = ObjectProperty(None)
-    #editor = ObjectProperty(None)
-    menu = ObjectProperty(None)
-    #infobar = ObjectProperty(None)
     text_input = ObjectProperty(None)
+    # menu = ObjectProperty(None)
 
 
     def dismiss_popup(self):
@@ -65,7 +63,7 @@ class Editor(App):
 Factory.register('Root', cls=Root)
 Factory.register('LoadDialog', cls=LoadDialog)
 Factory.register('SaveDialog', cls=SaveDialog)
-Factory.register('MenuDialog', cls=MenuDialog)
+# Factory.register('MenuDialog', cls=MenuDialog)
 
 
 if __name__ == '__main__':
