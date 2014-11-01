@@ -9,13 +9,26 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.popup import Popup
 from kivy.gesture import Gesture, GestureDatabase
 from kivy.clock import Clock
-
+from kivy.core.window import Window
+from kivy.uix.image import Image
+from kivy.loader import Loader
 import os
 
+import wolframSearch
+import thread
+
 class InputBox(TextInput):
-    def __init__(self, **kwargs):
-        super(InputBox, self).__init__(**kwargs)
-        self.selection_text = super(InputBox, self).selection_text
+    def __init__(self, *args, **kwargs):
+        super(InputBox, self).__init__(*args, **kwargs)
+    def _keyboard_on_key_down(self, window, keycode, text, modifiers):
+        # key, key_str = keycode
+        # if keycode[1] == 'enter':
+        #     print self.cursor
+        #     print self.text
+        if keycode[1] == 'enter' and self.selection_text != '':
+            thread.start_new_thread(wolframSearch.getQueryFromCommand, (self.selection_text,))
+        else:
+            super(InputBox, self)._keyboard_on_key_down(window, keycode, text, modifiers)
     def insert_text(self, substring, from_undo=False):
         s = substring.upper()
         return super(InputBox, self).insert_text(s, from_undo=from_undo)
@@ -45,20 +58,12 @@ class LoadDialog(FloatLayout):
 
 
 class TextEditor(FloatLayout):
+    input_box = ObjectProperty(None)
+    side_bar = ObjectProperty(None)
+    bottom_bar = ObjectProperty(None)
+    
     def __init__(self):
         super(TextEditor, self).__init__()
-        self.inputbox = InputBox()
-        self.sidebar = SideBar()
-
-    # def on_touch_down(self, touch):
-    #     if touch.is_double_tap:
-    #         print "Double Tap!"
-    #         print self.inputbox.selection_text
-    #     if self.inputbox.selection_text == '':
-    #         super(TextEditor, self).on_touch_down(touch)
-    #     else:
-    #         print self.inputbox.selection_text
-        
     def dismiss_popup(self):
         self._popup.dismiss()
 
@@ -69,7 +74,7 @@ class TextEditor(FloatLayout):
 
     def save(self, path, filename):
         with open(os.path.join(path, filename), 'w') as stream:
-            stream.write(self.inputbox.text)
+            stream.write(self.input_box.text)
 
         self.dismiss_popup()
 
@@ -85,14 +90,9 @@ class TextEditor(FloatLayout):
         self.dismiss_popup()
 
 class EditorApp(App):
-
+   
     def build(self):
         self.root = TextEditor()
-        # self.root.sidebar = SideBar()
-        self.root.sidebar.savedialog = SaveDialog()
-        self.root.sidebar.loaddialog = LoadDialog()
-        # self.root.inputbox = InputBox()
-
         return self.root
       
 if __name__ == '__main__':
