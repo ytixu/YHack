@@ -1,0 +1,40 @@
+#:kivy 1.1.0
+
+
+<TextEditor>
+	InputBox:
+		pos_hint: {'right':1.05,'top':1}
+	SideBar:
+		size_hint: (.05,1)
+	BottomLabel:
+		pos_hint: {'right':.05}
+		pos_hint: {'top':.55}
+	
+<InputBox>
+	foreground_color: (.8,.8,.8,1)
+	background_color: (.2,.2,.2,1)
+
+<SideBar>
+	BoxLayout:
+		orientation: "vertical"
+		Button:
+			id: btn_new
+			text: "New"
+		Button:
+			id: btn_save
+			text: "Save"
+		Button:
+			id: btn_load
+			text: "Load"
+		Button:
+			id: btn_edit
+			text: "Edit"
+
+<BottomLabel>
+	Label:
+		id: doc_id
+		text: "doc_id.txt"
+		color: .8,.8,.8,1
+
+
+

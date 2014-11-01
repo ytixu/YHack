@@ -1,33 +1,30 @@
 from kivy.app import App
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
 from kivy.properties import ObjectProperty
-from kivy.uix.label import Label
+from kivy.uix.widget import Widget
+from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.textinput import TextInput
 
-import editor
 
-class BottomBar(BoxLayout):
+class InputBox(TextInput):
+    def insert_text(self, substring, from_undo=False):
+        s = substring.upper()
+        return super(InputBox, self).insert_text(s, from_undo=from_undo)
+
+class BottomLabel(BoxLayout):
     pass
 
 class SideBar(BoxLayout):
     pass
 
+class TextEditor(FloatLayout):
+    pass
+
 class EditorApp(App):
     def build(self):
-        self.root = FloatLayout()
-        self.sidebar = SideBar(orientation="vertical",size_hint=(.05,1))
-        self.root.add_widget(self.sidebar)
-        self.sidebar.add_widget(Button(text="New",size_hint=(1,1)))
-        self.sidebar.add_widget(Button(text="Save",size_hint=(1,1)))
-        self.sidebar.add_widget(Button(text="Load",size_hint=(1,1)))
-        self.sidebar.add_widget(Button(text="Edit",size_hint=(1,1)))
-        self.editor = editor.EditorWindow(size_hint=(.95,.95),pos_hint={'x':.05, 'y':.05})
-        self.root.add_widget(self.editor)
-        self.bottombar = BottomBar(orientation="horizontal",size_hint=(1,.1))
-        self.root.add_widget(self.bottombar)
-        self.bottombar.add_widget(Label(text="doc.txt",size_hint=(.5,.5)))
+        self.root = TextEditor()
         return self.root
       
 if __name__ == '__main__':
