@@ -60,7 +60,7 @@ class BottomLabel(BoxLayout):
     pass
 
 class SideBar(BoxLayout):
-     pass
+    pass
 
 class SaveDialog(FloatLayout):
     save = ObjectProperty(None)

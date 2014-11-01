@@ -7,7 +7,6 @@ from lxml import etree
 from kivy.uix.image import Image
 from kivy.uix.label import Label
 
-utf8_parser = etree.XMLParser(encoding='utf-8')
 APP_ID = "RRVHV2-QTHHW63Y8J"
 
 def createPopupFromCommand(command, result):
@@ -37,7 +36,7 @@ def searchWolfram(query):
     
     link = ''.join(link)
     r = requests.get(link)
-    parseUnicode(r.text)
+    return etree.fromstring(r.content)
 
 def getDefinition(query):
     match = re.match(r'(definition\sof|define)', query, re.I)
@@ -47,7 +46,7 @@ def getDefinition(query):
     partial_result = ''
     for plaintext in root.iter('plaintext'):
         if(plaintext.text):
-            partial_result += plaintext.text
+            partial_result += ('\n' + plaintext.text)
     return partial_result
 
 
@@ -74,7 +73,3 @@ def getMath(query):
             urllib.urlretrieve(img.attrib['src'], "math.png")
             return "math.png"
         break
-
-def parseUnicode(string):
-    s = string.encode('utf-8')
-    return etree.fromstring(s, parser=utf8_parser)
