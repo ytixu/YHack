@@ -7,10 +7,14 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.popup import Popup
+from kivy.gesture import Gesture, GestureDatabase
 
 import os
 
 class InputBox(TextInput):
+    def __init__(self, **kwargs):
+        super(InputBox, self).__init__(**kwargs)
+        self.selection_text = super(InputBox, self).selection_text
     def insert_text(self, substring, from_undo=False):
         s = substring.upper()
         return super(InputBox, self).insert_text(s, from_undo=from_undo)
@@ -19,7 +23,7 @@ class BottomLabel(BoxLayout):
     pass
 
 class SideBar(BoxLayout):
-    pass
+     pass
 
 class SaveDialog(FloatLayout):
     save = ObjectProperty(None)
@@ -32,6 +36,19 @@ class LoadDialog(FloatLayout):
 
 
 class TextEditor(FloatLayout):
+    def __init__(self):
+        super(TextEditor, self).__init__()
+        self.inputbox = InputBox()
+        self.sidebar = SideBar()
+    def on_touch_down(self, touch):
+        if touch.is_double_tap:
+            print "Double Tap!"
+            print self.inputbox.selection_text
+        if self.inputbox.selection_text == '':
+            super(TextEditor, self).on_touch_down(touch)
+        else:
+            print self.inputbox.selection_text
+        
     def dismiss_popup(self):
         self._popup.dismiss()
 
@@ -58,12 +75,13 @@ class TextEditor(FloatLayout):
         self.dismiss_popup()
 
 class EditorApp(App):
+
     def build(self):
         self.root = TextEditor()
-        self.root.sidebar = SideBar()
+        # self.root.sidebar = SideBar()
         self.root.sidebar.savedialog = SaveDialog()
         self.root.sidebar.loaddialog = LoadDialog()
-        self.root.inputbox = InputBox()
+        # self.root.inputbox = InputBox()
 
         return self.root
       
