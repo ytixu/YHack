@@ -4,27 +4,52 @@ Root:
     text_input: text_input
     
     BoxLayout:
-        orientation: 'vertical'
+        orientation: 'horizontal'
         BoxLayout:
+            orientation: 'vertical'
+            height:root.height
             size_hint_y: None
-            height: 50
+
             Button:
-                text: 'Open'
+                height: 50
+                text: 'New'
+                #on_release: root.show_load()
+            Button:
+                text: 'Load'
                 on_release: root.show_load()
             Button:
                 text: 'Save'
                 on_release: root.show_save()
 
+            Button:
+                text: 'Edit'
+                #ADD FUNCITON
+
+
         BoxLayout:
+            size_hint_x: 10
             TextInput:
                 id: text_input
                 text: ''
+    
 
 #     MenuDialog:
 #         id: menu
 #         #x: root.x
 #         #center_y: root.center_y
 
+# <MenuDialog>
+#     BoxLayout:
+#         size: root.size
+#         pos: root.pos
+#         orientation:"vertical"
+#             Button:
+#                 text: "New"
+
+#             Button:
+#                 text: "Save"
+
+#             Button:
 # <MenuDialog>
 #     BoxLayout:
 #         size: root.size

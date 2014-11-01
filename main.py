@@ -10,6 +10,7 @@ from kivy.uix.popup import Popup
 import os
 
 # class Menu(BoxLayout):
+# class MenuDialog(BoxLayout):
 #     pass
 
 class LoadDialog(FloatLayout):
@@ -26,6 +27,9 @@ class SaveDialog(FloatLayout):
 class Root(FloatLayout):
     loadfile = ObjectProperty(None)
     savefile = ObjectProperty(None)
+    #editor = ObjectProperty(None)
+    #menu = ObjectProperty(None)
+    #infobar = ObjectProperty(None)
     text_input = ObjectProperty(None)
     # menu = ObjectProperty(None)
 
@@ -64,6 +68,7 @@ Factory.register('Root', cls=Root)
 Factory.register('LoadDialog', cls=LoadDialog)
 Factory.register('SaveDialog', cls=SaveDialog)
 # Factory.register('MenuDialog', cls=MenuDialog)
+#Factory.register('MenuDialog', cls=MenuDialog)
 
 
 if __name__ == '__main__':
