@@ -6,7 +6,9 @@ from kivy.uix.widget import Widget
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
+from kivy.uix.popup import Popup
 
+import os
 
 class InputBox(TextInput):
     def insert_text(self, substring, from_undo=False):
@@ -19,12 +21,50 @@ class BottomLabel(BoxLayout):
 class SideBar(BoxLayout):
     pass
 
+class SaveDialog(FloatLayout):
+    save = ObjectProperty(None)
+    inputbox = ObjectProperty(None)
+    cancel = ObjectProperty(None)
+
+class LoadDialog(FloatLayout):
+    load = ObjectProperty(None)
+    cancel = ObjectProperty(None)
+
+
 class TextEditor(FloatLayout):
-    pass
+    def dismiss_popup(self):
+        self._popup.dismiss()
+
+    def show_save(self):
+        content = SaveDialog(save=self.save, cancel=self.dismiss_popup)
+        self._popup = Popup(title="Save file", content=content, size_hint=(0.9, 0.9))
+        self._popup.open()
+
+    def save(self, path, filename):
+        with open(os.path.join(path, filename), 'w') as stream:
+            stream.write(self.inputbox.text)
+
+        self.dismiss_popup()
+
+    def show_load(self):
+        content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
+        self._popup = Popup(title="Load file", content=content, size_hint=(0.9, 0.9))
+        self._popup.open()
+
+    def load(self, path, filename):
+        with open(os.path.join(path, filename[0])) as stream:
+            self.inputbox.text = stream.read()
+
+        self.dismiss_popup()
 
 class EditorApp(App):
     def build(self):
         self.root = TextEditor()
+        self.root.sidebar = SideBar()
+        self.root.sidebar.savedialog = SaveDialog()
+        self.root.sidebar.loaddialog = LoadDialog()
+        self.root.inputbox = InputBox()
+
         return self.root
       
 if __name__ == '__main__':
