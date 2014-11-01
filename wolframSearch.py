@@ -1,11 +1,15 @@
+# -*- coding: utf-8 -*-
 import requests
-import xml.etree.ElementTree as ET
 import urllib
 import re
+
+from lxml import etree
 from kivy.uix.image import Image
 from kivy.uix.label import Label
 
+utf8_parser = etree.XMLParser(encoding='utf-8')
 APP_ID = "RRVHV2-QTHHW63Y8J"
+
 def createPopupFromCommand(command, result):
     result[0] = getQueryFromCommand(command)
     print result[0]
@@ -34,8 +38,7 @@ def searchWolfram(query):
     
     link = ''.join(link)
     r = requests.get(link)
-    x = ET.ElementTree(ET.fromstring(r.text))
-    return x
+    parseUnicode(r.text)
 
 def getDefinition(query):
     match = re.match(r'(definition\sof|define)', query, re.I)
@@ -70,7 +73,6 @@ def getMath(query):
             return "math.png"
         break
 
-# 
-# getQueryFromCommand("image of cow")
-# getQueryFromCommand("define cow")
-# getQueryFromCommand("math integrate 5x - 2y dx")
+def parseUnicode(string):
+    s = string.encode('utf-8')
+    return etree.fromstring(s, parser=utf8_parser)
