@@ -2,23 +2,27 @@ import requests
 import xml.etree.ElementTree as ET
 import urllib
 import re
+from kivy.uix.image import Image
+from kivy.uix.label import Label
 
 APP_ID = "RRVHV2-QTHHW63Y8J"
-
+def createPopupFromCommand(command, result):
+    result[0] = getQueryFromCommand(command)
+    print result[0]
+    return
 def getQueryFromCommand(command):
     match = re.match(r'(definition\sof|define|(?:image|picture)\sof|math)', command, re.I)
     if(match == None):
-        print "command undefined"
-        return
+        return "Undefind command."
     cmd = match.group().lower()
     if(cmd == "definition of" or cmd == "define"):
-        getDefinition(command)
+        return getDefinition(command)
     elif(cmd == "image of" or cmd == "picture of"):
-        getImage(command)
+        return getImage(command)
     elif(cmd == "math"):
-        getMath(command)
+        return getMath(command)
     else:
-        print "this shouldnt happen"
+        return "Failed."
 
 def searchWolfram(query):
     link = []
@@ -40,7 +44,7 @@ def getDefinition(query):
     root = searchWolfram(query)
     for plaintext in root.iter('plaintext'):
         if(plaintext.text):
-            print plaintext.text
+            return plaintext.text
 
 def getImage(query):
     match = re.match(r'((?:image|picture)\sof)', query, re.I)
@@ -55,6 +59,7 @@ def getImage(query):
             if(img is not None):
                 urllib.urlretrieve(img.attrib['src'], "1.png")
                 i = i + 1
+                return  "1.png"
 
 def getMath(query):
     math = query.split(' ',1)[1]
@@ -62,6 +67,7 @@ def getMath(query):
     for img in root.iter('img'):
         if(img is not None):
             urllib.urlretrieve(img.attrib['src'], "math.png")
+            return "math.png"
         break
 
 # 
