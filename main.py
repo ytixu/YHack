@@ -1,13 +1,22 @@
+try:
+   import cPickle as pickle
+except:
+   import pickle
+
 from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.widget import Widget
 from kivy.uix.textinput import TextInput
+
 
 class MainTextInput(TextInput):
     def __init__(self):
         self.start_convert = 0
         self.math_mode = 0
         self.data = []
+
+        self.saved_file = ''
+
         TextInput.__init__(self)
 
     def insert_text(self, substring, from_undo=False):
@@ -20,12 +29,43 @@ class MainTextInput(TextInput):
             else: # ending an equation
                 text = self._get_text()[self.start_convert:]
                 ### TODO: search on wolfram 
+                ### possibly save picture in disk, and just use the file directory
                 result_image = None 
                 self.data.append((text, result_image))
             self.start_convert = self.cursor_index() + 1
-        print self.cursor_index()
         print self.data
         return super(MainTextInput, self).insert_text(substring, from_undo=from_undo)
+
+    # serialization
+    def save_data(self, file_name = None):
+        if math_mode:
+            # can't serialize now
+            return False
+
+        if not file_name:
+            file_name = self.saved_file
+            if not file_name:
+                # need input name
+                return False
+        else:
+            self.saved_file = file_name
+
+        try:
+            pickle.dump( self, open( file_name, "wb" ) )
+            return True
+        except:
+            # invalid file_name
+            return False
+
+    def load_data(self, file_name):
+        self.save_data()
+
+        try:
+            return pickle.load( open( file_name, "rb" ) )
+        except:
+            # invalid file_name
+            return None
+
 
 class SimpleEditorApp(App):
     def build(self):
@@ -35,6 +75,7 @@ class SimpleEditorApp(App):
         # textinput.bind(text=on_text)
         root.add_widget(textinput)
         return root
+
       
 if __name__ == '__main__':
     SimpleEditorApp().run()
