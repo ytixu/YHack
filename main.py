@@ -8,6 +8,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.popup import Popup
 from kivy.gesture import Gesture, GestureDatabase
+from kivy.clock import Clock
 
 import os
 
@@ -18,6 +19,14 @@ class InputBox(TextInput):
     def insert_text(self, substring, from_undo=False):
         s = substring.upper()
         return super(InputBox, self).insert_text(s, from_undo=from_undo)
+
+    def on_double_tap(self):
+        tap = super(InputBox, self).on_double_tap()
+        Clock.schedule_once(lambda dt: self.display_t())
+        return tap
+
+    def display_t(self):
+        print(self.selection_text)
 
 class BottomLabel(BoxLayout):
     pass
@@ -40,14 +49,15 @@ class TextEditor(FloatLayout):
         super(TextEditor, self).__init__()
         self.inputbox = InputBox()
         self.sidebar = SideBar()
-    def on_touch_down(self, touch):
-        if touch.is_double_tap:
-            print "Double Tap!"
-            print self.inputbox.selection_text
-        if self.inputbox.selection_text == '':
-            super(TextEditor, self).on_touch_down(touch)
-        else:
-            print self.inputbox.selection_text
+
+    # def on_touch_down(self, touch):
+    #     if touch.is_double_tap:
+    #         print "Double Tap!"
+    #         print self.inputbox.selection_text
+    #     if self.inputbox.selection_text == '':
+    #         super(TextEditor, self).on_touch_down(touch)
+    #     else:
+    #         print self.inputbox.selection_text
         
     def dismiss_popup(self):
         self._popup.dismiss()
