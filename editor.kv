@@ -4,47 +4,48 @@
     input_box: input_box
     side_bar: side_bar
     bottom_label: bottom_label
-	InputBox:
+    InputBox:
         id: input_box
-		pos_hint: {'right':1.05,'top':1}
+        pos_hint: {'right':1.05,'top':1}
         focus: True
-	SideBar:
+    SideBar:
         id: side_bar
-		size_hint: (.05,1)
-	BottomLabel:
+        size_hint: (.05,1)
+    BottomLabel:
         id: bottom_label
-		pos_hint: {'right':.05}
-		pos_hint: {'top':.55}
-	
+        pos_hint: {'right':.05}
+        pos_hint: {'top':.55}
+    
 <InputBox>
-	foreground_color: (.8,.8,.8,1)
-	background_color: (.2,.2,.2,1)
+    foreground_color: (.8,.8,.8,1)
+    background_color: (.2,.2,.2,1)
 
 <SideBar>
-	BoxLayout:
-		orientation: "vertical"
-		Button:
-			id: btn_new
-			text: "New"
+    BoxLayout:
+        orientation: "vertical"
+        Button:
+            id: btn_new
+            text: "New"
+            on_release: app.root.show_new()
 
-		Button:
-			id: btn_save
-			text: "Save"
-			on_release: app.root.show_save()
-		Button:
-			id: btn_load
-			text: "Load"
-			on_release: app.root.show_load()
+        Button:
+            id: btn_save
+            text: "Save"
+            on_release: app.root.show_save()
+        Button:
+            id: btn_load
+            text: "Load"
+            on_release: app.root.show_load()
 
-		Button:
-			id: btn_edit
-			text: "Edit"
+        Button:
+            id: btn_edit
+            text: "Edit"
 
 <BottomLabel>
-	Label:
-		id: doc_id
-		text: "doc_id.txt"
-		color: .8,.8,.8,1
+    Label:
+        id: doc_id
+        text: "doc_id.txt"
+        color: .8,.8,.8,1
 
 <SaveDialog>:
     text_input: text_input

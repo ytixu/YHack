@@ -12,6 +12,8 @@ from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.uix.image import Image
 from kivy.loader import Loader
+from kivy.uix.label import Label
+
 import os
 
 import wolframSearch
@@ -43,6 +45,9 @@ class InputBox(TextInput):
 
 class BottomLabel(BoxLayout):
     pass
+    # bottom_label = ObjectProperty(None)
+    # def changeID(self):
+    #     self.Label = "CHANGED IT"
 
 class SideBar(BoxLayout):
      pass
@@ -75,9 +80,41 @@ class TextEditor(FloatLayout):
     def save(self, path, filename):
         with open(os.path.join(path, filename), 'w') as stream:
             stream.write(self.input_box.text)
-
+        #change bottom label
+        #self.bottom_bar.content.label.text = "CHANGED IT"
+        #BottomLabel.changeID()
         self.dismiss_popup()
 
+    def new_save(self, trashVariable):
+        self.dismiss_popup()
+        self.show_save()
+        self.input_box.text = ''
+
+    def new_no_save(self, trashVariable):
+        self.dismiss_popup()
+        self.input_box.text = ''
+
+    def show_new(self):
+        if (self.input_box.text) != '': #inputbox not empty
+            self._popup = Popup(title='Unsaved Work',
+                content=FloatLayout(),
+                size_hint=(None, None), size=(400, 300), auto_dismiss=False)
+            saveBtn = Button(text = 'Save', size_hint = (0.3333, 0.15), pos_hint={'x':0, 'y':0})
+            noSaveBtn = Button(text = 'Don\'t Save', size_hint = (0.3333, 0.15), pos_hint={'x':0.3333, 'y':0})
+            cnclBtn = Button (text = 'Cancel', size_hint=(0.3333,0.15), pos_hint={'x':0.6667, 'y':0})
+            saveWork = Label (text = 'Save Progress?', pos_hint={'x':0, 'y':0})
+            self._popup.content.add_widget(saveBtn)
+            self._popup.content.add_widget(noSaveBtn)            
+            self._popup.content.add_widget(cnclBtn)
+            self._popup.content.add_widget(saveWork)
+
+            saveBtn.bind(on_press = self.new_save) #clear input and change directory name
+            noSaveBtn.bind(on_press = self.new_no_save)
+            cnclBtn.bind(on_press = self._popup.dismiss)
+            self._popup.open()
+
+        #else: print ("empty") #do nothing(?) - change directory name  
+        
     def show_load(self):
         content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
         self._popup = Popup(title="Load file", content=content, size_hint=(0.9, 0.9))
@@ -118,7 +155,7 @@ if __name__ == '__main__':
 # pre-dated; already have course info
 # quick wizard when creating notes for a new class
 # pull examples from other peoples notes? (Sharing based)
-# word command followed by common symbol or key sequence	
+# word command followed by common symbol or key sequence    
 # heading hierarchy HEADING - SUBHEADING etc...
 # ability to click on words and get definition from previous areas in notes
 # highlighting words with options
