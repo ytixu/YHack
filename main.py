@@ -12,26 +12,41 @@ from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.uix.image import Image
 from kivy.loader import Loader
+from kivy.uix.label import Label
+import re
 import os
 
 import wolframSearch
 import thread
 
 class InputBox(TextInput):
+    
     def __init__(self, *args, **kwargs):
         super(InputBox, self).__init__(*args, **kwargs)
+        self.result = ["no_stored_result"]
     def _keyboard_on_key_down(self, window, keycode, text, modifiers):
-        # key, key_str = keycode
-        # if keycode[1] == 'enter':
-        #     print self.cursor
-        #     print self.text
         if keycode[1] == 'enter' and self.selection_text != '':
-            thread.start_new_thread(wolframSearch.getQueryFromCommand, (self.selection_text,))
+            # self.wolf_box.text = "Querying..."
+            thread.start_new_thread(wolframSearch.createPopupFromCommand, (self.selection_text,self.result))
+            Clock.schedule_once(self.queryHelper,2)
+            
         else:
             super(InputBox, self)._keyboard_on_key_down(window, keycode, text, modifiers)
+    def queryHelper(self,dt):
+        if self.result[0] != "no_stored_result":
+            match = re.match(r'.*\.png?$',self.result[0],re.I)
+            if match is None:
+                self.wolf_box.add_widget(Label(text=self.result[0], text_size=self.wolf_box.size))
+            else:
+                self.wolf_box.add_widget(Image(source=self.result[0]))
+            self.result[0] = "no_stored_result"
+        else:
+            Clock.schedule_once(self.queryHelper,dt)
+        
+
     def insert_text(self, substring, from_undo=False):
-        s = substring.upper()
-        return super(InputBox, self).insert_text(s, from_undo=from_undo)
+        # s = substring.upper()
+        return super(InputBox, self).insert_text(substring, from_undo=from_undo)
 
     def on_double_tap(self):
         tap = super(InputBox, self).on_double_tap()
@@ -61,9 +76,13 @@ class TextEditor(FloatLayout):
     input_box = ObjectProperty(None)
     side_bar = ObjectProperty(None)
     bottom_bar = ObjectProperty(None)
+    wolf_box = ObjectProperty(None)
+
     
     def __init__(self):
         super(TextEditor, self).__init__()
+        self.input_box.wolf_box = self.wolf_box
+        layout.bind(minimum_height=layout.setter('height'))
     def dismiss_popup(self):
         self._popup.dismiss()
 

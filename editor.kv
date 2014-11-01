@@ -4,10 +4,27 @@
     input_box: input_box
     side_bar: side_bar
     bottom_label: bottom_label
-	InputBox:
-        id: input_box
+    wolf_box: wolf_box
+	
+    ScrollView:
 		pos_hint: {'right':1.05,'top':1}
-        focus: True
+        InputBox:
+            id: input_box
+            focus: True
+    ScrollView:
+        pos_hint: {'right':1,'top':1}
+        size_hint: (.25,.25)
+        orientation: "vertical"
+        BoxLayout:
+            size_hint_y: None
+            id: wolf_box
+            
+            # canvas.before: 
+            #     Color: 
+            #         rgb: .6, .6, .6 
+            #     Rectangle: 
+            #         pos: self.pos 
+            #         size: self.size 
 	SideBar:
         id: side_bar
 		size_hint: (.05,1)
@@ -15,6 +32,7 @@
         id: bottom_label
 		pos_hint: {'right':.05}
 		pos_hint: {'top':.55}
+
 	
 <InputBox>
 	foreground_color: (.8,.8,.8,1)
