@@ -3,7 +3,7 @@
 <TextEditor>
     input_box: input_box
     side_bar: side_bar
-    bottom_label: bottom_label
+    bottom_bar: bottom_bar
     InputBox:
         id: input_box
         pos_hint: {'right':1.05,'top':1}
@@ -12,7 +12,7 @@
         id: side_bar
         size_hint: (.05,1)
     BottomLabel:
-        id: bottom_label
+        id: bottom_bar
         pos_hint: {'right':.05}
         pos_hint: {'top':.55}
     
@@ -42,6 +42,7 @@
             text: "Edit"
 
 <BottomLabel>
+    doc_id: doc_id
     Label:
         id: doc_id
         text: "doc_id.txt"

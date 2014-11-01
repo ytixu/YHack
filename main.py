@@ -44,10 +44,9 @@ class InputBox(TextInput):
         print(self.selection_text)
 
 class BottomLabel(BoxLayout):
-    pass
-    # bottom_label = ObjectProperty(None)
-    # def changeID(self):
-    #     self.Label = "CHANGED IT"
+    doc_id = ObjectProperty(None)
+    def changeID(self,s):
+        self.doc_id.text = s
 
 class SideBar(BoxLayout):
      pass
@@ -80,9 +79,8 @@ class TextEditor(FloatLayout):
     def save(self, path, filename):
         with open(os.path.join(path, filename), 'w') as stream:
             stream.write(self.input_box.text)
-        #change bottom label
-        #self.bottom_bar.content.label.text = "CHANGED IT"
-        #BottomLabel.changeID()
+       
+        self.bottom_bar.changeID(filename)
         self.dismiss_popup()
 
     def new_save(self, trashVariable):
