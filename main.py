@@ -82,7 +82,6 @@ class TextEditor(FloatLayout):
     def __init__(self):
         super(TextEditor, self).__init__()
         self.input_box.wolf_box = self.wolf_box
-        layout.bind(minimum_height=layout.setter('height'))
     def dismiss_popup(self):
         self._popup.dismiss()
 

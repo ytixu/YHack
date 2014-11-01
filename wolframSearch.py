@@ -12,7 +12,6 @@ APP_ID = "RRVHV2-QTHHW63Y8J"
 
 def createPopupFromCommand(command, result):
     result[0] = getQueryFromCommand(command)
-    print result[0]
     return
 def getQueryFromCommand(command):
     match = re.match(r'(definition\sof|define|(?:image|picture)\sof|math)', command, re.I)
@@ -45,9 +44,12 @@ def getDefinition(query):
     if(match is None):
         return
     root = searchWolfram(query)
+    partial_result = ''
     for plaintext in root.iter('plaintext'):
         if(plaintext.text):
-            return plaintext.text
+            partial_result += plaintext.text
+    return partial_result
+
 
 def getImage(query):
     match = re.match(r'((?:image|picture)\sof)', query, re.I)
