@@ -4,11 +4,28 @@ from kivy.uix.widget import Widget
 from kivy.uix.textinput import TextInput
 
 class MainTextInput(TextInput):
+    def __init__(self):
+        self.start_convert = 0
+        self.math_mode = 0
+        self.data = []
+        TextInput.__init__(self)
 
     def insert_text(self, substring, from_undo=False):
-        s = substring.upper()
-        return super(MainTextInput, self).insert_text(s, from_undo=from_undo)
-
+        # s = substring.upper()
+        if (substring == "$"):
+            self.math_mode = 1-self.math_mode 
+            if self.math_mode: # starting an equation
+                text = self._get_text()[self.start_convert:]
+                self.data.append(text)
+            else: # ending an equation
+                text = self._get_text()[self.start_convert:]
+                ### TODO: search on wolfram 
+                result_image = None 
+                self.data.append((text, result_image))
+            self.start_convert = self.cursor_index() + 1
+        print self.cursor_index()
+        print self.data
+        return super(MainTextInput, self).insert_text(substring, from_undo=from_undo)
 
 class SimpleEditorApp(App):
     def build(self):
