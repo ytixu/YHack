@@ -1,0 +1,73 @@
+FloatLayout:
+    FloatLayout:
+        # placeholder for the "normal screen"
+        Label:
+            center: root.center
+            text: 'test content'
+            size_hint: None, None
+            size: self.texture_size
+
+    ScrollView:
+        # container for the "notifications"
+        y: dg.top # let's stick it to the top
+        x: root.x # and to the left
+        size_hint_y: None
+        do_scroll_x: False # only vertical scrolling
+        do_scroll_y: True
+        
+        # most of the magic is there, auto adjust size to follow the draggable label
+        height: root.top - dg.y
+
+        # let's put a nearly opaque black background
+        canvas:
+            Color:
+                rgba: 0, 0, 0, .8
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        
+        # the actual notification container, with placeholder content
+        BoxLayout:
+            size_hint_y: None
+            height: 1000
+            orientation: 'vertical'
+            Label:
+                text: 'test'
+            Label:
+                text: 'test'
+            Label:
+                text: 'test'
+            Label:
+                text: 'test'
+            Label:
+                text: 'test'
+            Label:
+                text: 'test'
+            Label:
+                text: 'test'
+            Label:
+                text: 'test'
+            Label:
+                text: 'test'
+
+    # the draggable label, which behaviour is defined in python file
+    DraggableLabel:
+        # some decoration behind the text
+        canvas.before:
+            Color:
+                rgba: 0, 0, 0, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+            Color:
+                rgba: .5, .5, .5, 1
+            Rectangle:
+                pos: self.pos
+                size: self.width, 1
+
+        size_hint_y: None
+        top: root.top
+        # assign its id to "dg" so we can reference it elsewhere
+        id: dg
+        height: '20pt'
+        text: 'drag me'

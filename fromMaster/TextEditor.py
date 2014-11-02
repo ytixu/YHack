@@ -21,6 +21,8 @@ from kivy.clock import Clock
 from kivy.uix.label import Label
 from kivy.uix.image import Image
 from kivy.uix.scrollview import ScrollView
+from kivy.uix.stacklayout import StackLayout
+
 
 import wolframSearch
 
@@ -30,13 +32,14 @@ class TextLabel(Label):
         Label.__init__(self)
         self.padding = (-20, -20)
         self.bind(size=self.setter('text_size')) 
+        # self.bind(minimum_hight = self.setter('height'))
         self.text_size = size
         self.text = text
-        self.size_hint=(None,1)
+        self.size_hint = (1,None)
 
-class DisplayLabel(GridLayout):
+class DisplayLabel(StackLayout):
     def __init__(self):
-        GridLayout.__init__(self, cols=1, size_hint_y=None)
+        StackLayout.__init__(self, orientation = "tb-lr")
         self.data = {}
         index = 0
 
@@ -45,13 +48,13 @@ class DisplayLabel(GridLayout):
         text = ''
         for l in lines:
             if l not in self.data:
-                text += l
+                text += l+"\n"
             else:
                 if text:
                     self.add_widget(TextLabel(text, self.size))
                     text = ''
                 image = self.data[l]
-                self.add_widget(Image(source=image, size_hint=(None,1)))
+                self.add_widget(Image(source=image, size_hint=(1,None)))
         if text:
             self.add_widget(TextLabel(text, self.size))
 
@@ -105,8 +108,8 @@ class TextInputer(TextInput):
         start = ci - cc
         self.select_text(start, start+len_line)
         print self.selection_text
-        result = wolframSearch.getQueryFromCommand(line)
-        print result
+        # result = wolframSearch.getQueryFromCommand(line)
+        result = "math.png"
         self.textdisplay.addImage(result, line)
         Clock.schedule_once(lambda dt: self.textdisplay.update(self.text.split('\n')))
 

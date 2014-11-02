@@ -15,11 +15,11 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.popup import Popup
 from kivy.gesture import Gesture, GestureDatabase
-from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.label import Label
 from kivy.graphics import Color
 from kivy.clock import Clock
+
+import wolframSearch
 
 class MainTextInput(TextInput):
     def __init__(self):
@@ -134,6 +134,7 @@ class TextInputer(TextInput):
     def __init__(self):
         TextInput.__init__(self)
         self.ctrl = False
+        self.data = []
 
     def set_textdisplay(self,textdisplay):
         self.textdisplay = textdisplay
@@ -170,16 +171,20 @@ class TextInputer(TextInput):
         super(TextInputer, self).delete_selection(from_undo)
 
     def selectMath(self): # almost the same as double tap
-        ci = self.cursor_index()
-        cc = self.cursor_col
-        line = self._lines[self.cursor_row]
-        len_line = len(line)
-        start = max(0, len(line[:cc]) - line[:cc].rfind(u' ') - 1)
-        end = line[cc:].find(u' ')
-        end = end if end > - 1 else (len_line - cc)
+        _, cr = self.cursor
+        # ci = self.cursor_index()
+        # cc = self.cursor_col
+        # line = self._lines[self.cursor_row]
+        # len_line = len(line)
+        # start = max(0, len(line[:cc]) - line[:cc].rfind(u' ') - 1)
+        # end = line[cc:].find(u' ')
+        # end = end if end > - 1 else (len_line - cc)
         self.select_text(ci - start, ci + end)
         print self.selection_text 
-        # TODO: to image and blah...
+        result = wolframSearch.getQueryFromCommand(self.selection_text)
+        if not result:
+
+
 
     def display_t(self, func, *args):
         # print self.textdisplay.selection_text
@@ -188,10 +193,21 @@ class TextInputer(TextInput):
         self.textdisplay.readonly = True
 
 
+class MenuStack(GridLayout):
+
+    def __init__(self, **kwargs):
+        GridLayout.__init__(self, cols=1, rows=3, **kwargs)
+        self.new = Button(text="new",size_hint_x=None, width=50)
+        self.save = Button(text="save",size_hint_x=None, width=50)
+        self.load = Button(text="load",size_hint_x=None, width=50)
+        for btn in [self.new, self.save, self.load]:
+            self.add_widget(btn)
+
+
 class TextEditor(GridLayout):
     
-    def __init__(self):
-        GridLayout.__init__(self, cols=1, rows=2)
+    def __init__(self, **kwargs):
+        GridLayout.__init__(self, cols=1, rows=2, **kwargs)
         textdisplay = TextInput()
         textdisplay.readonly = True
         self.textinput = TextInputer()
@@ -200,13 +216,28 @@ class TextEditor(GridLayout):
         self.add_widget(textdisplay)
         self.add_widget(self.textinput)
 
+class MainPanel(BoxLayout):
+    def __init__(self):
+        BoxLayout.__init__(self)
+        self.orientation = "horizontal"
+        self.btns = MenuStack(size_hint_x=None, width=50)
+        self.txte = TextEditor()
+        self.add_widget(self.btns)
+        self.add_widget(self.txte)
+
+        self.btns.new.bind(on_press=self.new)
+        self.btns.save.bind(on_press=self.save)
+        self.btns.load.bind(on_press=self.load)
+
+    def new():
+        pass
+
+    def save():
+
+
 class SimpleEditorApp(App):
     def build(self):
-        self.root = TextEditor()
-        # editor = TextEditor()
-        # editor.focus = True
-        # textinput.bind(text=on_text)
-        # root.add_widget(editor)
+        self.root = MainPanel()
         return self.root
 
       
