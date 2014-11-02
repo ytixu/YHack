@@ -30,8 +30,7 @@ class InputBox(TextInput):
         self.result = ["no_stored_result"]
     def _keyboard_on_key_down(self, window, keycode, text, modifiers):
         if keycode[1] == 'enter' and self.selection_text != '':
-            # self.wolf_box.text = "Querying..."
-
+            self.wolf_box.add_widget(Label(text="Querying..."))
             thread.start_new_thread(wolframSearch.createPopupFromCommand, (self.selection_text,self.result))
             Clock.schedule_once(self.queryHelper,2)
             
