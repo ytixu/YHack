@@ -16,6 +16,7 @@ from kivy.loader import Loader
 from kivy.uix.label import Label
 from kivy.uix.scrollview import ScrollView
 from functools import partial
+from kivy.uix.slider import Slider
 import re
 import os
 
@@ -28,7 +29,6 @@ class InputBox(TextInput):
         super(InputBox, self).__init__(*args, **kwargs)
         self.result = ["no_stored_result"]
     def _keyboard_on_key_down(self, window, keycode, text, modifiers):
-        print(self.get_cursor_from_xy(0,0))
         if keycode[1] == 'enter' and self.selection_text != '':
             # self.wolf_box.text = "Querying..."
 
@@ -70,7 +70,7 @@ class BottomLabel(BoxLayout):
     def update_cursor_pos(self, cursor, *args):
         pos_x = cursor.cursor_col
         pos_y = cursor.cursor_row
-        self.cursor_pos.text = "Line: " + str(pos_y) + " Column: " + str(pos_x)
+        self.cursor_pos.text = "Line: " + str(pos_y+1) + " Column: " + str(pos_x)
         Clock.schedule_once(partial(self.update_cursor_pos,cursor),.5)
 
 
@@ -97,7 +97,7 @@ class TextEditor(FloatLayout):
         super(TextEditor, self).__init__()
         self.wolf_box = GridLayout(cols=1, spacing=20,size_hint_y=None)
         self.wolf_box.bind(minimum_height=self.wolf_box.setter('height'))
-        self.scroll_view = ScrollView(size_hint=(.2,.1), do_scroll_x=False, pos_hint={'right':1,'top':.99})
+        self.scroll_view = ScrollView(size_hint=(.3,.2), do_scroll_x=False, pos_hint={'right':.95,'top':.95})
         self.scroll_view.add_widget(self.wolf_box)
         self.input_box.wolf_box = self.wolf_box
         self.add_widget(self.scroll_view)
@@ -144,9 +144,9 @@ class TextEditor(FloatLayout):
             self._popup.content.add_widget(cnclBtn)
             self._popup.content.add_widget(saveWork)
 
-            saveBtn.bind(on_press = self.new_save) #clear input and change directory name
-            noSaveBtn.bind(on_press = self.new_no_save)
-            cnclBtn.bind(on_press = self._popup.dismiss)
+            saveBtn.bind(on_release = self.new_save) #clear input and change directory name
+            noSaveBtn.bind(on_release = self.new_no_save)
+            cnclBtn.bind(on_release = self._popup.dismiss)
             self._popup.open()
 
         #else: print ("empty") #do nothing(?) - change directory name  
@@ -163,6 +163,37 @@ class TextEditor(FloatLayout):
         self.dismiss_popup()
 
         self.dismiss_popup()
+    def slider_r_update(self, slider, *args):
+        self.input_box.foreground_color[0] = slider.value
+    def slider_g_update(self, slider, *args):
+        self.input_box.foreground_color[1] = slider.value
+    def slider_b_update(self, slider, *args):
+        self.input_box.foreground_color[2] = slider.value
+    def slider_size_update(self, slider, *args):
+        self.input_box.font_size = slider.value
+    def show_edit(self):
+        self._popup = Popup(title="Editing options",content=BoxLayout(orientation="vertical"),size_hint=(0.9, 0.9))
+        colour_lbl = Label(text="Colour: (RGB sliders)")
+        slider_r = Slider(min=0, max=255, value=204)
+        slider_r.bind(value=self.slider_r_update)
+        slider_g = Slider(min=0, max=255, value=204)
+        slider_g.bind(value=self.slider_g_update)
+        slider_b = Slider(min=0, max=255, value=204)
+        slider_b.bind(value=self.slider_b_update)
+        size_lbl = Label(text="Font_size: (8 to 72)")
+        slider_size = Slider(min=8, max=72, value=10)
+        slider_size.bind(value=self.slider_size_update)
+        button = Button(text="Done")
+        button.bind(on_release = self._popup.dismiss)
+        self._popup.content.add_widget(colour_lbl)
+        self._popup.content.add_widget(slider_r)
+        self._popup.content.add_widget(slider_g)
+        self._popup.content.add_widget(slider_b)
+        self._popup.content.add_widget(size_lbl)
+        self._popup.content.add_widget(slider_size)
+        self._popup.content.add_widget(button)
+        self._popup.open()
+       
 
 class EditorApp(App):
    
