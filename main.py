@@ -60,7 +60,9 @@ class InputBox(TextInput):
         print(self.selection_text)
 
 class BottomLabel(BoxLayout):
-    pass
+    doc_id = ObjectProperty(None)
+    def changeID(self,s):
+        self.doc_id.text = s
 
 class SideBar(BoxLayout):
     pass
@@ -102,9 +104,42 @@ class TextEditor(FloatLayout):
     def save(self, path, filename):
         with open(os.path.join(path, filename), 'w') as stream:
             stream.write(self.input_box.text)
-
+       
+        self.bottom_bar.changeID(path + "/" +filename)
+        self.input_box.text = ''
         self.dismiss_popup()
 
+    def new_save(self, trashVariable):
+        self.dismiss_popup()
+        self.show_save()
+        self.bottom_bar.changeID("doc_id.txt")
+
+    def new_no_save(self, trashVariable):
+        self.dismiss_popup()
+        self.input_box.text = ''
+        self.bottom_bar.changeID("doc_id.txt")
+
+    def show_new(self):
+        if (self.input_box.text) != '': #inputbox not empty
+            self._popup = Popup(title='Unsaved Work',
+                content=FloatLayout(),
+                size_hint=(None, None), size=(400, 300), auto_dismiss=False)
+            saveBtn = Button(text = 'Save', size_hint = (0.3333, 0.15), pos_hint={'x':0, 'y':0})
+            noSaveBtn = Button(text = 'Don\'t Save', size_hint = (0.3333, 0.15), pos_hint={'x':0.3333, 'y':0})
+            cnclBtn = Button (text = 'Cancel', size_hint=(0.3333,0.15), pos_hint={'x':0.6667, 'y':0})
+            saveWork = Label (text = 'Save Progress?', pos_hint={'x':0, 'y':0})
+            self._popup.content.add_widget(saveBtn)
+            self._popup.content.add_widget(noSaveBtn)            
+            self._popup.content.add_widget(cnclBtn)
+            self._popup.content.add_widget(saveWork)
+
+            saveBtn.bind(on_press = self.new_save) #clear input and change directory name
+            noSaveBtn.bind(on_press = self.new_no_save)
+            cnclBtn.bind(on_press = self._popup.dismiss)
+            self._popup.open()
+
+        #else: print ("empty") #do nothing(?) - change directory name  
+        
     def show_load(self):
         content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
         self._popup = Popup(title="Load file", content=content, size_hint=(0.9, 0.9))
@@ -112,7 +147,9 @@ class TextEditor(FloatLayout):
 
     def load(self, path, filename):
         with open(os.path.join(path, filename[0])) as stream:
-            self.inputbox.text = stream.read()
+            self.input_box.text = stream.read()
+        self.bottom_bar.changeID(filename[0])
+        self.dismiss_popup()
 
         self.dismiss_popup()
 
