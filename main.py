@@ -4,6 +4,7 @@ from kivy.uix.button import Button
 from kivy.properties import ObjectProperty
 from kivy.uix.widget import Widget
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.popup import Popup
@@ -13,6 +14,7 @@ from kivy.core.window import Window
 from kivy.uix.image import Image
 from kivy.loader import Loader
 from kivy.uix.label import Label
+from kivy.uix.scrollview import ScrollView
 import re
 import os
 
@@ -35,10 +37,11 @@ class InputBox(TextInput):
     def queryHelper(self,dt):
         if self.result[0] != "no_stored_result":
             match = re.match(r'.*\.png?$',self.result[0],re.I)
+            self.wolf_box.clear_widgets()
             if match is None:
-                self.wolf_box.add_widget(Label(text=self.result[0], text_size=self.wolf_box.size))
+                self.wolf_box.add_widget(Label(text=self.result[0], size_hint=(1,None), text_size=self.wolf_box.size))
             else:
-                self.wolf_box.add_widget(Image(source=self.result[0]))
+                self.wolf_box.add_widget(Image(source=self.result[0], size_hint=(1,None)))
             self.result[0] = "no_stored_result"
         else:
             Clock.schedule_once(self.queryHelper,dt)
@@ -76,12 +79,18 @@ class TextEditor(FloatLayout):
     input_box = ObjectProperty(None)
     side_bar = ObjectProperty(None)
     bottom_bar = ObjectProperty(None)
-    wolf_box = ObjectProperty(None)
 
     
     def __init__(self):
         super(TextEditor, self).__init__()
+        self.wolf_box = GridLayout(cols=1, spacing=20,size_hint_y=None)
+        self.wolf_box.bind(minimum_height=self.wolf_box.setter('height'))
+        self.scroll_view = ScrollView(size_hint=(.2,.1), do_scroll_x=False, pos_hint={'right':1,'top':.99})
+        self.scroll_view.add_widget(self.wolf_box)
         self.input_box.wolf_box = self.wolf_box
+        self.add_widget(self.scroll_view)
+
+       
     def dismiss_popup(self):
         self._popup.dismiss()
 
@@ -111,6 +120,8 @@ class EditorApp(App):
    
     def build(self):
         self.root = TextEditor()
+        
+
         return self.root
       
 if __name__ == '__main__':

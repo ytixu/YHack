@@ -1,23 +1,31 @@
-#:kivy 1.1.0
+#:kivy 1.1.1
 
 <TextEditor>
     input_box: input_box
     side_bar: side_bar
-    bottom_label: bottom_label
-    wolf_box: wolf_box
-	
+    bottom_label: bottom_label	
     ScrollView:
 		pos_hint: {'right':1.05,'top':1}
         InputBox:
             id: input_box
             focus: True
-    ScrollView:
-        pos_hint: {'right':1,'top':1}
-        size_hint: (.25,.25)
-        orientation: "vertical"
-        BoxLayout:
-            size_hint_y: None
-            id: wolf_box
+    # ScrollView:
+    #     wolf_box: wolf_box
+    #     id: scroll_view
+    #     do_scroll_x: False
+    #     do_scroll_y: True
+    #     bar_pos_y: 'left'
+    #     pos_hint: {'right':1,'top':.75}
+    #     size_hint_y: None
+    #     size_hint_x:.25   
+    #     orientation: "vertical"
+    #     GridLayout:
+    #         id: wolf_box
+    #         cols: 1
+    #         spacing: 10
+    #         size_hint_x: 1
+    #         size_hint_y: None
+            
             
             # canvas.before: 
             #     Color: 
@@ -32,7 +40,6 @@
         id: bottom_label
 		pos_hint: {'right':.05}
 		pos_hint: {'top':.55}
-
 	
 <InputBox>
 	foreground_color: (.8,.8,.8,1)
