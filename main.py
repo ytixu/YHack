@@ -39,6 +39,7 @@ class InputBox(TextInput):
             super(InputBox, self)._keyboard_on_key_down(window, keycode, text, modifiers)
     def queryHelper(self,dt):
         if self.result[0] != "no_stored_result":
+            print self.result[0]
             match = re.match(r'.*\.png?$',self.result[0],re.I)
             self.wolf_box.clear_widgets()
             if match is None:
@@ -95,9 +96,9 @@ class TextEditor(FloatLayout):
     
     def __init__(self):
         super(TextEditor, self).__init__()
-        self.wolf_box = GridLayout(cols=1, spacing=20,size_hint_y=None)
+        self.wolf_box = GridLayout(cols=1,rows=50,size_hint_y=None)
         self.wolf_box.bind(minimum_height=self.wolf_box.setter('height'))
-        self.scroll_view = ScrollView(size_hint=(.3,.2), do_scroll_x=False, pos_hint={'right':.95,'top':.95})
+        self.scroll_view = ScrollView(size_hint=(.3,.15), do_scroll_x=False, pos_hint={'right':.95,'top':.95})
         self.scroll_view.add_widget(self.wolf_box)
         self.input_box.wolf_box = self.wolf_box
         self.add_widget(self.scroll_view)
@@ -164,24 +165,24 @@ class TextEditor(FloatLayout):
 
         self.dismiss_popup()
     def slider_r_update(self, slider, *args):
-        self.input_box.foreground_color[0] = slider.value
+        self.input_box.foreground_color[0] = slider.value/255
     def slider_g_update(self, slider, *args):
-        self.input_box.foreground_color[1] = slider.value
+        self.input_box.foreground_color[1] = slider.value/255
     def slider_b_update(self, slider, *args):
-        self.input_box.foreground_color[2] = slider.value
+        self.input_box.foreground_color[2] = slider.value/255
     def slider_size_update(self, slider, *args):
         self.input_box.font_size = slider.value
     def show_edit(self):
         self._popup = Popup(title="Editing options",content=BoxLayout(orientation="vertical"),size_hint=(0.9, 0.9))
-        colour_lbl = Label(text="Colour: (RGB sliders)")
-        slider_r = Slider(min=0, max=255, value=204)
+        colour_lbl = Label(text="Font Colour: (RGB sliders)")
+        slider_r = Slider(min=0, max=255, value=(self.input_box.foreground_color[0]*255))
         slider_r.bind(value=self.slider_r_update)
-        slider_g = Slider(min=0, max=255, value=204)
+        slider_g = Slider(min=0, max=255, value=(self.input_box.foreground_color[1]*255))
         slider_g.bind(value=self.slider_g_update)
-        slider_b = Slider(min=0, max=255, value=204)
+        slider_b = Slider(min=0, max=255, value=(self.input_box.foreground_color[2]*255))
         slider_b.bind(value=self.slider_b_update)
-        size_lbl = Label(text="Font_size: (8 to 72)")
-        slider_size = Slider(min=8, max=72, value=10)
+        size_lbl = Label(text="Font Size: (8 to 72)")
+        slider_size = Slider(min=8, max=72, value=self.input_box.font_size)
         slider_size.bind(value=self.slider_size_update)
         button = Button(text="Done")
         button.bind(on_release = self._popup.dismiss)
