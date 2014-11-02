@@ -13,7 +13,7 @@ def createPopupFromCommand(command, result):
     result[0] = getQueryFromCommand(command)
     return
 def getQueryFromCommand(command):
-    match = re.match(r'(definition\sof|define|(?:image|picture)\sof|math)', command, re.I)
+    match = re.match(r'(definition\sof|define|(?:image|picture)\sof|math\s(:?graph|plot)|math)', command, re.I)
     if(match == None):
         return "Undefind command."
     cmd = match.group().lower()
@@ -21,8 +21,10 @@ def getQueryFromCommand(command):
         return getDefinition(command)
     elif(cmd == "image of" or cmd == "picture of"):
         return getImage(command)
+    elif(cmd == "math graph" or cmd == "math plot"):
+        return getImage(command.split(" ",1)[1])
     elif(cmd == "math"):
-        return getMath(command)
+        return getMathRepresentation(command)
     else:
         return "Failed."
 
@@ -39,9 +41,6 @@ def searchWolfram(query):
     return etree.fromstring(r.content)
 
 def getDefinition(query):
-    match = re.match(r'(definition\sof|define)', query, re.I)
-    if(match is None):
-        return
     root = searchWolfram(query)
     partial_result = ''
     for plaintext in root.iter('plaintext'):
@@ -51,9 +50,6 @@ def getDefinition(query):
 
 
 def getImage(query):
-    match = re.match(r'((?:image|picture)\sof)', query, re.I)
-    if(match is None):
-        return
     root = searchWolfram(query)
     i = 0
     for img in root.iter('img'):
@@ -65,7 +61,7 @@ def getImage(query):
                 i = i + 1
                 return  "1.png"
 
-def getMath(query):
+def getMathRepresentation(query):
     math = query.split(' ',1)[1]
     root = searchWolfram(math)
     for img in root.iter('img'):
