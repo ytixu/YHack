@@ -1,10 +1,11 @@
-import os
-try:
-   import cPickle as pickle
-except:
-   import pickle
+# import os
+# try:
+#    import cPickle as pickle
+# except:
+#    import pickle
+import PIL.Image
 
-from pyh import *
+# from pyh import *
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
@@ -30,42 +31,58 @@ class TextLabel(Label):
 
     def __init__(self, text, size):
         Label.__init__(self)
-        self.padding = (-20, -20)
+        self.padding = (-20, 0)
         self.bind(size=self.setter('text_size')) 
         # self.bind(minimum_hight = self.setter('height'))
         self.text_size = size
         self.text = text
-        self.size_hint = (1,None)
+        self.size_hint = (1,0.2)
 
-class DisplayLabel(StackLayout):
+class DisplayLabel(ScrollView):
     def __init__(self):
-        StackLayout.__init__(self, orientation = "tb-lr")
+        ScrollView.__init__(self, size_hint=(1, 1), do_scroll_x=False, pos_hint={'right':1,'top':1})
+        self.grid = GridLayout(cols=1, size_hint_y = None, row_default_height=20,row_force_default=False)
+        self.grid.bind(minimum_height = self.grid.setter('height'))
+        self.add_widget(self.grid)
         self.data = {}
         index = 0
 
     def update(self, lines):
-        self.clear_widgets()
-        text = ''
-        for l in lines:
+        self.grid.clear_widgets()
+        # text = ''
+        mini_rows = {}
+        for i, l in enumerate(lines):
             if l not in self.data:
-                text += l+"\n"
+                mini_rows[i] = 20
+                self.grid.rows_minimum = mini_rows
+                self.grid.add_widget(TextLabel(l, self.grid.size))
+                # text += l+"\n"
             else:
-                if text:
-                    self.add_widget(TextLabel(text, self.size))
-                    text = ''
-                image = self.data[l]
-                self.add_widget(Image(source=image, size_hint=(1,None)))
-        if text:
-            self.add_widget(TextLabel(text, self.size))
+                # if text:
+                #     self.grid.add_widget(TextLabel(text, self.grid.size))
+                #     text = ''
+                image, size = self.data[l]
+                img = Image(source=image, size=size)
+                print img.height
+                mini_rows[i] = img.height
+                self.grid.rows_minimum = mini_rows
+                self.grid.add_widget(img)
+        # if text:
+        #     self.grid.add_widget(TextLabel(text, self.grid.size))
 
     def addImage(self, image, line):
-        self.data[line] = image
+        try:
+            im=PIL.Image.open(image)
+        except:
+            return
+        print im.size
+        self.data[line] = (image, im.size)
 
 
 class TextInputer(TextInput):
 
     def __init__(self):
-        TextInput.__init__(self)
+        TextInput.__init__(self, size_hint_y = 0.5)
         self.ctrl = False
         self.data = []
 
@@ -108,8 +125,8 @@ class TextInputer(TextInput):
         start = ci - cc
         self.select_text(start, start+len_line)
         print self.selection_text
-        # result = wolframSearch.getQueryFromCommand(line)
-        result = "math.png"
+        result = wolframSearch.getQueryFromCommand(line)
+        # result = "math.png"
         self.textdisplay.addImage(result, line)
         Clock.schedule_once(lambda dt: self.textdisplay.update(self.text.split('\n')))
 
@@ -131,12 +148,10 @@ class TextEditor(GridLayout):
         GridLayout.__init__(self, cols=1, rows=2, **kwargs)
         textdisplay = DisplayLabel()
         textdisplay.readonly = True
-        scroll_view = ScrollView(do_scroll_x=False, pos_hint={'right':1,'top':.99})
-        scroll_view.add_widget(textdisplay)
         self.textinput = TextInputer()
         self.textinput.set_textdisplay(textdisplay)
         self.textinput.focus = True
-        self.add_widget(scroll_view)
+        self.add_widget(textdisplay)
         self.add_widget(self.textinput)
 
 class MainPanel(BoxLayout):
