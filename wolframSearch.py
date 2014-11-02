@@ -2,6 +2,7 @@
 import requests
 import urllib
 import re
+import json
 
 from lxml import etree
 from kivy.uix.image import Image
@@ -9,9 +10,23 @@ from kivy.uix.label import Label
 
 APP_ID = "RRVHV2-QTHHW63Y8J"
 
+def load_image_name():
+    try:
+        return json.load(open('data/data.json', 'r'))
+    except:
+        return "0"
+
+IMAGE_NAME = load_image_name()
+
+def update_image_name():
+    global IMAGE_NAME
+    IMAGE_NAME = str(int(IMAGE_NAME) + 1)
+    json.dump(IMAGE_NAME, open('data/data.json', 'w'))
+
 def createPopupFromCommand(command, result):
     result[0] = getQueryFromCommand(command)
     return
+
 def getQueryFromCommand(command):
     match = re.match(r'(definition\sof|define|(?:image|picture)\sof|math\s(:?graph|plot)|math)', command, re.I)
     if(match == None):
@@ -57,15 +72,19 @@ def getImage(query):
             i = i + 1
         else:
             if(img is not None):
-                urllib.urlretrieve(img.attrib['src'], "1.png")
+                filename = ("data/%s.png")%(IMAGE_NAME)
+                urllib.urlretrieve(img.attrib['src'], filename)
                 i = i + 1
-                return  "1.png"
+                update_image_name()
+                return filename
 
 def getMathRepresentation(query):
     math = query.split(' ',1)[1]
     root = searchWolfram(math)
     for img in root.iter('img'):
         if(img is not None):
-            urllib.urlretrieve(img.attrib['src'], "math.png")
-            return "math.png"
+            filename = ("data/%s.png")%(IMAGE_NAME)
+            urllib.urlretrieve(img.attrib['src'], filename)
+            update_image_name()
+            return filename
         break
