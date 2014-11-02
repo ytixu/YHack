@@ -15,6 +15,7 @@ from kivy.uix.image import Image
 from kivy.loader import Loader
 from kivy.uix.label import Label
 from kivy.uix.scrollview import ScrollView
+from functools import partial
 import re
 import os
 
@@ -27,8 +28,10 @@ class InputBox(TextInput):
         super(InputBox, self).__init__(*args, **kwargs)
         self.result = ["no_stored_result"]
     def _keyboard_on_key_down(self, window, keycode, text, modifiers):
+        print(self.get_cursor_from_xy(0,0))
         if keycode[1] == 'enter' and self.selection_text != '':
             # self.wolf_box.text = "Querying..."
+
             thread.start_new_thread(wolframSearch.createPopupFromCommand, (self.selection_text,self.result))
             Clock.schedule_once(self.queryHelper,2)
             
@@ -61,8 +64,15 @@ class InputBox(TextInput):
 
 class BottomLabel(BoxLayout):
     doc_id = ObjectProperty(None)
+    cursor_pos = ObjectProperty(None)
     def changeID(self,s):
         self.doc_id.text = s
+    def update_cursor_pos(self, cursor, *args):
+        pos_x = cursor.cursor_col
+        pos_y = cursor.cursor_row
+        self.cursor_pos.text = "Line: " + str(pos_y) + " Column: " + str(pos_x)
+        Clock.schedule_once(partial(self.update_cursor_pos,cursor),.5)
+
 
 class SideBar(BoxLayout):
     pass
@@ -91,6 +101,7 @@ class TextEditor(FloatLayout):
         self.scroll_view.add_widget(self.wolf_box)
         self.input_box.wolf_box = self.wolf_box
         self.add_widget(self.scroll_view)
+        Clock.schedule_once(partial(self.bottom_bar.update_cursor_pos,self.input_box),.5)
 
        
     def dismiss_popup(self):

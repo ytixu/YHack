@@ -14,7 +14,7 @@
 		size_hint: (.05,1)
 	BottomLabel:
         id: bottom_bar
-		pos_hint: {'right':.05}
+        size_hint: (1.2,1)
 		pos_hint: {'top':.55}
 	
 <InputBox>
@@ -44,10 +44,14 @@
 
 <BottomLabel>
     doc_id: doc_id
+    cursor_pos: cursor_pos
 	Label:
 		id: doc_id
 		text: "doc_id.txt"
 		color: .8,.8,.8,1
+    Label:
+        id: cursor_pos
+        color: .8,.8,.8,1
 
 <SaveDialog>:
     text_input: text_input
